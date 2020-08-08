@@ -1,10 +1,12 @@
+import os
+
 import pandas as pd
 
-from utils import drop_columns, verify_data
+from utils import OUT_FOLDER, drop_columns, verify_data
 
 
 def main():
-    df = pd.read_pickle('outlier_removed.pkl')
+    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'outlier_removed.pkl'))
 
     # * ONE-HOT ENCODING *
 
@@ -23,7 +25,7 @@ def main():
     df = drop_columns(df, ['location'])
     verify_data(df)
 
-    df.to_pickle('onehot_encoded.pkl')
+    df.to_pickle(os.path.join(OUT_FOLDER, 'onehot_encoded.pkl'))
 
 
 if __name__ == '__main__':

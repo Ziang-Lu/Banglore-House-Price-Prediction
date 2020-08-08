@@ -1,9 +1,16 @@
+import os
+
 import pandas as pd
 
-from utils import verify_data, drop_columns
+from utils import DATA_FOLDER, OUT_FOLDER, verify_data, drop_columns
 
 
-def _convert_to_float(expr):
+def _convert_to_sqft(expr: str) -> float:
+    """
+    Converts the given expression to a float number in square feet.
+    :param expr: str
+    :return: float
+    """
     unit_to_sqft = {
         'Sq.Meter': 10.7639,
         'Perch': 272.25
@@ -23,9 +30,9 @@ def _convert_to_float(expr):
 
 
 def main():
-    filename = 'datasets_20710_26737_Bengaluru_House_Data.csv'
-
-    df1 = pd.read_csv(filename)
+    df1 = pd.read_csv(
+        os.path.join(DATA_FOLDER, 'datasets_20710_26737_Bengaluru_House_Data')
+    )
     verify_data(df1)
 
     # Remove unnecessary columns
@@ -44,7 +51,7 @@ def main():
 
     # Uniform the "total_sqft" column data format
     # print(df3['total_sqft'].unique())
-    df3['total_sqft'] = df3['total_sqft'].apply(_convert_to_float)
+    df3['total_sqft'] = df3['total_sqft'].apply(_convert_to_sqft)
     verify_data(df3)
 
     # Uniform the "size" column data format
@@ -58,7 +65,7 @@ def main():
     df5 = drop_columns(df4, ['bath'])
     verify_data(df5)
 
-    df5.to_pickle('data_cleaned.pkl')
+    df5.to_pickle(os.path.join(OUT_FOLDER, 'data_cleaned.pkl'))
 
 
 if __name__ == '__main__':

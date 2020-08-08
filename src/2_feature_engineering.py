@@ -1,9 +1,16 @@
+import os
+
 import pandas as pd
+from pandas import DataFrame
 
-from utils import verify_data
+from utils import OUT_FOLDER, verify_data
 
 
-def _freq_of_locs(df):
+def _freq_of_locations(df: DataFrame):
+    """
+    Returns the frequency of locations in the given dataframe.
+    :param df: DataFrame
+    """
     freq_of_locs = df.groupby('location')['location'].agg(
         'count').sort_values(ascending=False)
     print(freq_of_locs)
@@ -11,7 +18,7 @@ def _freq_of_locs(df):
 
 
 def main():
-    df = pd.read_pickle('data_cleaned.pkl')
+    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'data_cleaned.pkl'))
 
     # Consider the "location" column, which is a non-quantitative column
 
@@ -27,7 +34,7 @@ def main():
     # * DIMENSIONALITY REDUCTION *
 
     # Check the number of properties for each location
-    freq_of_locs = _freq_of_locs(df)
+    freq_of_locs = _freq_of_locations(df)
     # We can see that most of the locations only have a small number of
     # properties.
 
@@ -42,7 +49,7 @@ def main():
     print(len(df['location'].unique()))  # 242 dimensions
     verify_data(df)
 
-    df.to_pickle('feature_engineered.pkl')
+    df.to_pickle(os.path.join(OUT_FOLDER, 'feature_engineered.pkl'))
 
 
 if __name__ == '__main__':
