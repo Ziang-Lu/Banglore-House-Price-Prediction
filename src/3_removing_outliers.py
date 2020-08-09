@@ -1,13 +1,22 @@
-import os
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Step 3: Removing Outliers
+"""
+
+__author__ = 'Ziang Lu'
 
 import numpy as np
 import pandas as pd
 
-from utils import OUT_FOLDER, drop_columns, drop_indices, verify_data
+from utils import (
+    drop_columns, drop_indices, read_from_pickle, save_to_pickle, verify_data
+)
 
 
 def main():
-    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'feature_engineered.pkl'))
+    df = read_from_pickle('feature_engineered.pkl')
 
     # Add another temporary feature which is useful
     df['price_per_sqft'] = df['price'] * 100000 / df['total_sqft']
@@ -66,7 +75,7 @@ def main():
     df = drop_columns(df, ['price_per_sqft'])
     verify_data(df)
 
-    df.to_pickle(os.path.join(OUT_FOLDER, 'outlier_removed.pkl'))
+    save_to_pickle(df, 'outlier_removed.pkl')
 
 
 if __name__ == '__main__':

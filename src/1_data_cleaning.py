@@ -1,8 +1,17 @@
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Step 1: Data Cleaning
+"""
+
+__author__ = 'Ziang Lu'
+
 import os
 
 import pandas as pd
 
-from utils import DATA_FOLDER, OUT_FOLDER, verify_data, drop_columns
+from utils import DATA_FOLDER, save_to_pickle, verify_data, drop_columns
 
 
 def _convert_to_sqft(expr: str) -> float:
@@ -31,7 +40,9 @@ def _convert_to_sqft(expr: str) -> float:
 
 def main():
     df1 = pd.read_csv(
-        os.path.join(DATA_FOLDER, 'datasets_20710_26737_Bengaluru_House_Data')
+        os.path.join(
+            DATA_FOLDER, 'datasets_20710_26737_Bengaluru_House_Data.csv'
+        )
     )
     verify_data(df1)
 
@@ -65,7 +76,7 @@ def main():
     df5 = drop_columns(df4, ['bath'])
     verify_data(df5)
 
-    df5.to_pickle(os.path.join(OUT_FOLDER, 'data_cleaned.pkl'))
+    save_to_pickle(df5, 'data_cleaned.pkl')
 
 
 if __name__ == '__main__':

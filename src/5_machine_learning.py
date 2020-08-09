@@ -1,8 +1,15 @@
-import os
-import pickle
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-import numpy as np
-import pandas as pd
+"""
+Step 5: Machine Learning (Model Building)
+"""
+
+__author__ = 'Ziang Lu'
+
+import json
+import os
+
 from pandas import DataFrame, Series
 from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -10,7 +17,7 @@ from sklearn.model_selection import (
     GridSearchCV, ShuffleSplit, cross_val_score, train_test_split
 )
 
-from utils import OUT_FOLDER, drop_columns
+from utils import OUT_FOLDER, drop_columns, read_from_pickle, save_to_pickle
 
 
 def _find_best_algo_using_gridsearchcv(X: DataFrame, y: Series) -> DataFrame:
@@ -60,20 +67,8 @@ def _find_best_algo_using_gridsearchcv(X: DataFrame, y: Series) -> DataFrame:
     return DataFrame(scores, columns=['model', 'best_score', 'best_params'])
 
 
-def predict_score(X: DataFrame, lr_clf: LinearRegression, location: str,
-                  total_sqft: float, bedrooms: int, bathrooms: int) -> float:
-    x = np.zeroes(len(X.columns))
-    x[0] = total_sqft
-    x[1] = bedrooms
-    x[2] = bathrooms
-    loc_idx = np.where(X.columns == location)[0][0]
-    if loc_idx >= 0:
-        x[loc_idx] = 1
-    return lr_clf.predict([x])[0]
-
-
 def main():
-    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'onehot_encoded.pkl'))
+    df = read_from_pickle('onehot_encoded.pkl')
 
     X = drop_columns(df, ['price'])
     y = df['price']
@@ -85,10 +80,10 @@ def main():
     )
 
     # Training
-    lr_clf = LinearRegression()
-    lr_clf.fit(X_train, y_train)
+    lr_model = LinearRegression()
+    lr_model.fit(X_train, y_train)
     # Predict
-    print(lr_clf.score(X_test, y_test))
+    print(lr_model.score(X_test, y_test))
 
     # k-fold validation
     cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=0)
@@ -97,11 +92,15 @@ def main():
     # Try some algorithms, and find the best one using GridSearchCV
 
     print(_find_best_algo_using_gridsearchcv(X, y))
+
+    # Dump the necessary data
+    with open(os.path.join(OUT_FOLDER, 'columns.json'), 'w') as f:
+        columns = list(map(lambda x: x.strip().lower(), X.columns))
+        json.dump(columns, f)
+
     # According to the result, linear regression model without normalization
     # performs the best.
-
-    with open(os.path.join(OUT_FOLDER, 'linear_regression.sav'), 'wb') as f:
-        pickle.dump(lr_clf, f)
+    save_to_pickle(lr_model, 'linear_regression_model.sav')
 
 
 if __name__ == '__main__':

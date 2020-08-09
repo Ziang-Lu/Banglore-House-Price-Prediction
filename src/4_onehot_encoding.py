@@ -1,12 +1,19 @@
-import os
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Step 4: One-hot Encoding
+"""
+
+__author__ = 'Ziang Lu'
 
 import pandas as pd
 
-from utils import OUT_FOLDER, drop_columns, verify_data
+from utils import drop_columns, read_from_pickle, save_to_pickle, verify_data
 
 
 def main():
-    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'outlier_removed.pkl'))
+    df = read_from_pickle('outlier_removed.pkl')
 
     # * ONE-HOT ENCODING *
 
@@ -17,7 +24,7 @@ def main():
     # To represent some location, we can use all 0s on other locations to
     # indicate that location, so we can safely drop one column of one-hot
     # encoding.
-    onehot_encoding = drop_columns(onehot_encoding, ['others'])
+    onehot_encoding = drop_columns(onehot_encoding, ['Others'])
 
     # Concatenate the one-hot encoding dataframe with the original dataframe
     df = pd.concat([df, onehot_encoding], axis='columns')
@@ -25,7 +32,7 @@ def main():
     df = drop_columns(df, ['location'])
     verify_data(df)
 
-    df.to_pickle(os.path.join(OUT_FOLDER, 'onehot_encoded.pkl'))
+    save_to_pickle(df, 'onehot_encoded.pkl')
 
 
 if __name__ == '__main__':

@@ -1,5 +1,9 @@
-from typing import List
+import os
+import pickle
+from typing import Any, List
+from numpy.lib.arraysetops import isin
 
+import pandas as pd
 from pandas import DataFrame
 
 DATA_FOLDER = '../data/'
@@ -36,3 +40,34 @@ def drop_indices(df: DataFrame, indices: List[int]) -> DataFrame:
     :return: DataFrame
     """
     return df.drop(indices, axis='index')
+
+
+def save_to_pickle(obj: Any, name: str) -> None:
+    """
+    Pickles the given object.
+    :param obj: object
+    :param name: str
+    :return: None
+    """
+    path = os.path.join(OUT_FOLDER, name)
+    if isinstance(obj, DataFrame):  # DataFrame
+        obj.to_pickle(path)
+    else:  # Machine learning model
+        with open(path, 'wb') as f:
+            pickle.dump(obj, f)
+    print(f'Object is written to {path}')
+
+
+def read_from_pickle(name: str, is_dataframe: bool=True) -> DataFrame:
+    """
+    Reads an object from pickle.
+    :param name: str
+    :param is_dataframe: bool
+    :return: DataFrame
+    """
+    path = os.path.join(OUT_FOLDER, name)
+    if is_dataframe:  # DataFrame
+        return pd.read_pickle(path)
+    else:
+        with open(path, 'rb') as f:
+            return pickle.load(f)

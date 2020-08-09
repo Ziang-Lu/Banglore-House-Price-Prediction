@@ -1,9 +1,15 @@
-import os
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-import pandas as pd
+"""
+Step 2: Feature Engineering
+"""
+
+__author__ = 'Ziang Lu'
+
 from pandas import DataFrame
 
-from utils import OUT_FOLDER, verify_data
+from utils import read_from_pickle, save_to_pickle, verify_data
 
 
 def _freq_of_locations(df: DataFrame):
@@ -18,7 +24,7 @@ def _freq_of_locations(df: DataFrame):
 
 
 def main():
-    df = pd.read_pickle(os.path.join(OUT_FOLDER, 'data_cleaned.pkl'))
+    df = read_from_pickle('data_cleaned.pkl')
 
     # Consider the "location" column, which is a non-quantitative column
 
@@ -44,12 +50,13 @@ def main():
     freq_of_locs_less_than_10 = freq_of_locs[freq_of_locs <= 10]
     print(len(freq_of_locs_less_than_10))  # 1063
     df['location'] = df['location'].apply(
-        lambda x: 'others' if x in freq_of_locs_less_than_10 else x
+        lambda x: 'Others' if x in freq_of_locs_less_than_10 else x
     )
     print(len(df['location'].unique()))  # 242 dimensions
+    print(df['location'].unique())
     verify_data(df)
 
-    df.to_pickle(os.path.join(OUT_FOLDER, 'feature_engineered.pkl'))
+    save_to_pickle(df, 'feature_engineered.pkl')
 
 
 if __name__ == '__main__':
