@@ -22,5 +22,5 @@ Dataset is downloaded from Kaggle: https://www.kaggle.com/sangarshanan/bangalore
 
 ## Licensing
 
-This repo is distributed under the MIT license.
+This repo is distributed under the <a href="https://github.com/Ziang-Lu/Banglore-House-Price-Prediction/blob/master/LICENSE">MIT license</a>.
 
